@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturne — Gerbang Utama</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="tema-gelap halaman-gerbang-body">
+
+    <div class="gerbang-box">
+        <h1 class="logo-besar">Nocturne<span>.</span></h1>
+        <p class="sub-gerbang">Mau masuk ke ruangan mana hari ini?</p>
+
+        <div class="pilihan-pintu">
+            <button class="kartu-pintu" onclick="arahKeLogin('baca')">
+                <span class="ikon-pintu">📖</span>
+                <h3>Ruang Baca</h3>
+                <p>Jelajahi kumpulan cerpen & novel.</p>
+            </button>
+
+            <button class="kartu-pintu" onclick="arahKeLogin('tulis')">
+                <span class="ikon-pintu">✍️</span>
+                <h3>Ruang Tulis</h3>
+                <p>Studio untuk menulis & menerbitkan.</p>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function arahKeLogin(tujuan) {
+            sessionStorage.setItem('tujuanRuangan', tujuan);
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturne — Ruang Baca</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="tema-gelap">
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-kiri">
+                <h1 class="logo">Nocturne<span>.</span></h1>
+                <span class="badge-ruang">📖 Ruang Baca</span>
+            </div>
+            <div class="nav-kanan">
+                <span id="sapaan-user" class="sapaan-user"></span>
+                <button onclick="logout()" class="btn-keluar">Keluar / Ganti Ruang</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="header-seksi">
+            <h2>Rak Cerita & Novel</h2>
+            <p>Pilih karya di bawah ini untuk mulai membaca.</p>
+        </div>
+        <div id="wadah-cerpen" class="grid-cerpen"></div>
+    </main>
+
+    <div id="modal-baca" class="modal tersembunyi">
+        <div class="modal-kertas">
+            <div class="modal-topbar">
+                <span id="baca-genre" class="badge-genre">Genre</span>
+                <button id="btn-tutup-baca" class="btn-kembali">← Tutup</button>
+            </div>
+            <article class="artikel-penuh">
+                <h1 id="baca-judul"></h1>
+                <p id="baca-penulis" class="meta-penulis"></p>
+                <div id="baca-isi" class="konten-cerita"></div>
+            </article>
+        </div>
+    </div>
+
+    <script>
+        const sesi = JSON.parse(sessionStorage.getItem('sesiUser'));
+        if (!sesi) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('sapaan-user').textContent = `Halo, ${sesi.email}`;
+            muatDaftarCerita();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('sesiUser');
+            window.location.href = 'index.html';
+        }
+
+        function muatDaftarCerita() {
+            const wadah = document.getElementById('wadah-cerpen');
+            let daftar = JSON.parse(localStorage.getItem('cerpenKu')) || [];
+            wadah.innerHTML = "";
+
+            if (daftar.length === 0) {
+                wadah.innerHTML = `<p style="color: var(--teks-sekunder); grid-column: 1/-1; text-align:center; padding: 50px 0;">Belum ada cerita di rak.</p>`;
+                return;
+            }
+
+            daftar.forEach(c => {
+                const kartu = document.createElement('article');
+                kartu.className = 'kartu-cerpen';
+                const cuplikan = c.isi.length > 120 ? c.isi.substring(0, 120) + "..." : c.isi;
+
+                kartu.innerHTML = `
+                    <div>
+                        <span class="badge-genre">${c.genre}</span>
+                        <h3>${c.judul}</h3>
+                        <p class="penulis">Oleh ${c.penulis}</p>
+                        <p class="cuplikan">${cuplikan}</p>
+                    </div>
+                    <div class="kartu-bawah">
+                        <button class="btn-baca" onclick="bacaCerita(${c.id})">Baca →</button>
+                        <button class="btn-hapus" onclick="hapusCerita(${c.id})">Hapus</button>
+                    </div>
+                `;
+                wadah.appendChild(kartu);
+            });
+        }
+
+        function bacaCerita(id) {
+            let daftar = JSON.parse(localStorage.getItem('cerpenKu')) || [];
+            const c = daftar.find(item => item.id === id);
+            if (c) {
+                document.getElementById('baca-genre').textContent = c.genre;
+                document.getElementById('baca-judul').textContent = c.judul;
+                document.getElementById('baca-penulis').textContent = `Ditulis oleh ${c.penulis}`;
+                document.getElementById('baca-isi').textContent = c.isi;
+                document.getElementById('modal-baca').classList.remove('tersembunyi');
+            }
+        }
+
+        document.getElementById('btn-tutup-baca').addEventListener('click', () => {
+            document.getElementById('modal-baca').classList.add('tersembunyi');
+        });
+
+        function hapusCerita(id) {
+            if (confirm("Hapus cerita ini?")) {
+                let daftar = JSON.parse(localStorage.getItem('cerpenKu')) || [];
+                daftar = daftar.filter(item => item.id !== id);
+                localStorage.setItem('cerpenKu', JSON.stringify(daftar));
+                muatDaftarCerita();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturne — Ruang Tulis</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="tema-gelap">
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-kiri">
+                <h1 class="logo">Nocturne<span>.</span></h1>
+                <span class="badge-ruang">✍️ Ruang Tulis</span>
+            </div>
+            <div class="nav-kanan">
+                <span id="sapaan-user" class="sapaan-user"></span>
+                <button onclick="logout()" class="btn-keluar">Keluar / Ganti Ruang</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="studio-tulis">
+            <div class="studio-info">
+                <span>Penulis: <strong id="label-penulis-aktif"></strong></span>
+                <span id="hitung-kata">0 kata</span>
+            </div>
+            <input type="text" id="input-judul" class="input-judul" placeholder="Judul Cerita / Novel...">
+            <div class="baris-meta">
+                <select id="input-genre" class="input-meta">
+                    <option value="Fiksi">Genre: Fiksi</option>
+                    <option value="Romansa">Genre: Romansa</option>
+                    <option value="Misteri">Genre: Misteri</option>
+                    <option value="Fantasi">Genre: Fantasi</option>
+                    <option value="Slice of Life">Genre: Slice of Life</option>
+                </select>
+            </div>
+            <textarea id="input-isi" rows="13" placeholder="Mulai ketik naskahmu di sini..."></textarea>
+            <div class="studio-aksi">
+                <button id="btn-publish" class="btn-publish">Terbitkan ke Ruang Baca</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const sesi = JSON.parse(sessionStorage.getItem('sesiUser'));
+        if (!sesi) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('sapaan-user').textContent = `Halo, ${sesi.email}`;
+            document.getElementById('label-penulis-aktif').textContent = sesi.email;
+        }
+
+        function logout() {
+            sessionStorage.removeItem('sesiUser');
+            window.location.href = 'index.html';
+        }
+
+        const inputIsi = document.getElementById('input-isi');
+        const hitungKata = document.getElementById('hitung-kata');
+
+        inputIsi.addEventListener('input', () => {
+            const kata = inputIsi.value.trim();
+            hitungKata.textContent = `${kata ? kata.split(/\s+/).length : 0} kata`;
+        });
+
+        document.getElementById('btn-publish').addEventListener('click', () => {
+            const judul = document.getElementById('input-judul').value.trim();
+            const genre = document.getElementById('input-genre').value;
+            const isi = inputIsi.value.trim();
+
+            if (!judul || !isi) {
+                alert("Judul dan isi cerita wajib diisi!");
+                return;
+            }
+
+            const baru = {
+                id: Date.now(),
+                judul,
+                penulis: sesi.email,
+                genre,
+                isi
+            };
+
+            let daftar = JSON.parse(localStorage.getItem('cerpenKu')) || [];
+            daftar.unshift(baru);
+            localStorage.setItem('cerpenKu', JSON.stringify(daftar));
+
+            alert("Cerita berhasil diterbitkan!");
+            window.location.href = 'baca.html';
+        });
+    </script>
+</body>
+</html>

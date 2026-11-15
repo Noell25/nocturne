@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nocturne — Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="tema-gelap halaman-gerbang-body">
+
+    <div class="gerbang-box">
+        <h1 class="logo-besar">Nocturne<span>.</span></h1>
+        <p id="teks-tujuan" class="sub-gerbang">Silakan login terlebih dahulu.</p>
+
+        <div class="form-login" style="text-align: left; max-width: 100%;">
+            <a href="index.html" class="btn-kembali-gerbang">← Kembali ke Pilihan</a>
+            
+            <input type="email" id="input-email" class="input-login" placeholder="Email / Nama Akun..." autocomplete="off">
+            <input type="password" id="input-sandi" class="input-login" placeholder="Kata Sandi (min. 4 karakter)">
+            
+            <button id="btn-masuk" class="btn-masuk">Masuk ke Ruangan →</button>
+        </div>
+    </div>
+
+    <script>
+        const tujuan = sessionStorage.getItem('tujuanRuangan') || 'baca';
+        document.getElementById('teks-tujuan').textContent = tujuan === 'baca' 
+            ? 'Login untuk masuk ke Ruang Baca.' 
+            : 'Login untuk masuk ke Ruang Tulis.';
+
+        document.getElementById('btn-masuk').addEventListener('click', () => {
+            const email = document.getElementById('input-email').value.trim();
+            const sandi = document.getElementById('input-sandi').value.trim();
+
+            if (!email || sandi.length < 4) {
+                alert("Isi email dan kata sandi minimal 4 karakter dulu ya!");
+                return;
+            }
+
+            sessionStorage.setItem('sesiUser', JSON.stringify({ email }));
+
+            if (tujuan === 'baca') {
+                window.location.href = 'baca.html';
+            } else {
+                window.location.href = 'tulis.html';
+            }
+        });
+    </script>
+</body>
+</html>
